@@ -1,0 +1,115 @@
+<html><head><title>pem (System Identification Toolbox)</title>
+<!-- $Revision: 1.10 $  $Date: 2002/06/22 04:12:52 $ -->
+
+<!-- DOCNAME: System Identification Toolbox -->
+<!-- CHUNKNAME: pem -->
+<!-- CHAPNAME: pem -->
+<!-- HEADSTUFF -->
+<link rel=stylesheet href="docstyle1.css" type="text/css">
+</head>
+<body bgcolor=#ffffff>
+<a name="979122">
+<!-- NAVBARTOP -->
+<table border=0 width="100%" cellpadding=0 cellspacing=0><tr>
+<td valign=baseline bgcolor="#ffe4b0"><b>System Identification Toolbox</b></td>
+<td valign=baseline bgcolor="#ffe4b0" align=right><a href="pe.html"><img src="b_prev.gif" border=0></a>&nbsp;&nbsp;&nbsp;<a href="plotiddata.html"><img src="b_next.gif" border=0></a></td>
+</tr>
+</table><font size=+3 color="#990000">pem</font>
+
+
+<!-- FNAME:pem --><a name="979122"></a>
+
+<!-- SYNCHTO: ch4ref1.html -->
+
+
+<a name=""></a><!-- H2 --><a name="979123"></a><br>
+<p><a name="979125"></a>Estimate the parameters of general linear models.</p>
+<a name="syntax"></a><!-- H2 --><a name="979126"></a><p><font size=+1 color="#990000"><b>Syntax</b></font><br>
+<ul class=continued><li class=continued><pre><a name="979127"></a>m = pem(data)
+<a name="1233464"></a>m = pem(data,mi)
+<a name="1233196"></a>m = pem(data,mi,'Property1',Value1,...,'PropertyN',ValueN)
+<a name="1233192"></a>m = pem(data,orders)
+<a name="1108994"></a>m = pem(data,'nx',ssorder)
+<a name="1233191"></a>m = pem(data,'na',na,'nb',nb,'nc',nc,'nd',nd,'nf',nf,'nk',nk)
+<a name="1020317"></a>m = pem(data,orders,'Property1',Value1,...,'PropertyN',ValueN)
+</pre></li></ul>
+<a name="description"></a><!-- H2 --><a name="979128"></a><p><font size=+1 color="#990000"><b>Description</b></font><br>
+<p><a name="979129"></a><code>pem</code> is the basic estimation command in the toolbox and covers a variety of situations. </p>
+<p><a name="1372018"></a><code>data</code> is always an <code>iddata</code> object that contains the input/output data.</p>
+<a name="with_initial_model"></a><!-- H3 --><a name="1372019"></a><p><font color="#990000"><b>With Initial Model</b></font><br>
+<p><a name="1372020"></a><code>mi</code> is any <code>idmodel</code> object, <code>idarx</code>, <code>idpoly</code>, <code>idss</code>, or <code>idgrey</code>. It could be a result of another estimation routine, or constructed and modified by the constructors (<code>idpoly</code>, <code>idss</code>, <code>idgrey</code>) and <code>set</code>. The properties of <code>mi</code> can also be changed by any property name/property value pairs in pem as indicated in the syntax.</p>
+<p><a name="1233448"></a><code>m</code> is then returned as the best fitting model in the model structure defined by <code>mi</code>.The iterative search is initialized at the parameters of the initial/nominal model <code>mi. m</code> will be of the same class as <code>mi</code>.</p>
+<a name="black-box_state-space_models"></a><!-- H3 --><a name="1233459"></a><p><font color="#990000"><b>Black-Box State-Space Models</b></font><br>
+<p><a name="1233465"></a>With <code>m = pem(data,n)</code>, where <code>n</code> is a positive integer, or <code>m = pem(data,</code>'<code>nx</code>'<code>,n)</code> a state-space model of order <code>n</code> is estimated. The default situation is that it is estimated in a <code>'Free</code>' parameterization, that can be further modified by the properties <code>'nk</code>'<code>,</code> <code>'DisturbanceModel</code>', and <code>'InitialState</code>'<code> </code>(see the reference pages for <code>idss</code> and <code>n4sid</code>). The model is initialized by <code>n4sid</code>, and then further adjusted by optimizing the prediction error fit.</p>
+<p><a name="1233476"></a>You can choose between several different orders by </p>
+<ul class=continued><li class=continued><pre><a name="1233480"></a>m = pem(data,'nx',[n1,n2,...nN]) 
+</pre></li></ul>
+<p><a name="1233484"></a>and you will then be prompted for the "best" order. By</p>
+<ul class=continued><li class=continued><pre><a name="1233485"></a>m = pem(data,'best')
+</pre></li></ul>
+<p><a name="1233486"></a>an automatic choice of order among 1:10 is made.</p>
+<ul class=continued><li class=continued><pre><a name="1233487"></a>m = pem(data)
+</pre></li></ul>
+<p><a name="1233491"></a>is short for <code>m = pem(data,</code>'<code>best</code>'<code>). </code><font face=sansserif>To work with other delays use, e.g. </font><code>m = pem(data,</code>'<code>best</code>'<code>,</code>'<code>nk</code>'<code>,[0,...0])</code>.</p>
+<p><a name="1456813"></a>In this case <code>m</code> is returned as an <code>idss</code> model.</p>
+<a name="black-box_multiple-input-single-output_models"></a><!-- H3 --><a name="1456814"></a><p><font color="#990000"><b>Black-Box Multiple-Input-Single-Output Models</b></font><br>
+<p><a name="1456815"></a>The function <code>pem</code> also handles the general multi-input-single-output structure</p>
+<ul class=continued><a name="1380290"></a><li class=continued><img src="ch4re105.gif" align=bottom>
+</ul>
+<p><a name="979135"></a>The orders of this general model are given either as</p>
+<ul class=continued><li class=continued><pre><a name="1394112"></a>orders = [na nb nc nd nf nk]
+</pre></li></ul>
+<p><a name="1394113"></a>or with <code>(...'na</code>'<code>,na,</code>'<code>nb</code>'<code>,nb,...)</code> as shown in the syntax. Here <code>na</code>, <code>nb</code>, <code>nc</code>, <code>nd</code>, and <code>nf</code> are the orders of the model and <code>nk</code> is the delay(s). For multi-input systems, <code>nb</code>, <code>nf</code>, and <code>nk</code> are row vectors giving the orders and delays of each input. (See <a href="ch3tut5.html#978000">Polynomial Representation of Transfer Functions</a> in <font face=sansserif>the "Tutorial" chapter</font> for exact definitions of the orders.) When the orders are specified with separate entries, those not given are taken as zero.</p>
+<p><a name="1588011"></a>In this case <code>m</code> is returned as an <code>idpoly</code> object.</p>
+<a name="properties"></a><!-- H2 --><a name="1588012"></a><p><font size=+1 color="#990000"><b>Properties</b></font><br>
+<p><a name="1588013"></a>In all cases the algorithm is affected by the properties (see <code>Algorithm Properties</code> for details):</p>
+<ul><li><a name="1235098"></a><code><b>Focus</b></code><font face=sansserif>,</font> with possible values <code>'Prediction</code>' (Default), <code>'Simulation</code>' or a SISO filter (given as an LTI or <code>idmodel</code> object or as filter coefficients) 
+</li>
+<li><a name="1235136"></a><code><b>MaxIter</b></code><strong> </strong>and<strong> </strong><code><b>Tolerance</b></code><font face=sansserif> </font>govern the stopping criteria for the iterative search.
+</li>
+<li><a name="1562730"></a><code><b>LimitError</b></code> deals with how the criterion can be made less sensitive to outliers and bad data
+</li>
+<li><a name="1562731"></a><code><b>MaxSize</b></code> determines the largest matrix ever formed by the algorithm. The algorithm goes into <code>for</code>-<font face=sansserif>loops </font>to avoid larger matrices, which may be more efficient than using virtual memory.
+</li>
+<li><a name="1235160"></a><code><b>Trace</b></code><font face=sansserif>, </font>with possible values <code>'Off</code>'<code>,</code> <code>'On</code>', <code>'Full</code>', that governs the information sent to the MATLAB command window.
+</li>
+</ul>
+<p><a name="1235165"></a>For black-box state-space models, also <code>'N4Weight</code>' and <code>'N4Horizon</code>' will affect the result, since these models are initialized with <code>n4sid</code> estimate. See the reference page for <code><a href="n4sid.html">n4sid</a></code>.</p>
+<p><a name="1235164"></a>Typical <code>idmodel</code> properties to affect are (see<strong> </strong><code>idmodel</code> properties for more details):</p>
+<ul><li><a name="1235166"></a><code><b>Ts</b></code><font face=sansserif>, </font>the sampling interval. Set <code>'Ts</code>'<code>=0</code> to obtain a continuous-time state-space model. For discrete-time models, <code>'Ts</code>' is automatically set to sampling interval of the data. Note that, in the black box case, it is usually better to first estimate a discrete-time model, and then convert that to continuous time by <code>d2c</code>.
+</li>
+<li><a name="1235170"></a><code><b>nk</b></code><font face=sansserif>, </font>the time delays from the inputs (not applicable to structured state-space models). Time delays specified by '<code>nk</code>', will be <font face=sansserif>included in the model.</font>
+</li>
+<li><a name="1235171"></a><code><b>DisturbanceModes</b></code><font face=sansserif> determines the parameterization of </font><code>K</code><font face=sansserif> </font>for free and canonical state-space parameterizations, as well as for <code>idgrey </code>models.
+</li>
+<li><a name="1235172"></a><code><b>InitialState</b></code>. The initial state may have a substantial influence on the estimation result for system with slow responses. It is most pronounced for Output-Error models <code>(K=0</code> for state-space, and <code>na=nc=nd=0</code> for input/output models). The default value <code>'Auto</code>', estimates the influence of the initial state and sets the value to <code>'Estimate</code>', <code>'Backcast</code>' or<code> 'Zero</code>', based on this effect. Possible values of <code>'InitialState</code>'<code> </code>are<code> 'Auto</code>', <code>'Estimate</code>', <code>'Backcast</code>', <code>'Zero</code>' and '<code>Fixed</code>'. See <a href="ch3tut62.html#998641">Initial State</a> in the "Tutorial".
+</li>
+</ul>
+<a name="examples"></a><a name="exmpl_sec"></a><!-- H2 --><a name="1235130"></a><p><font size=+1 color="#990000"><b>Examples</b></font><br>
+<p><a name="979147"></a>Here is an example of a system with three inputs and two outputs.  A canonical form state-space model of order 5 is sought.</p>
+<ul class=continued><li class=continued><pre><a name="979148"></a>z = iddata([y1 y2],[ u1 u2 u3]);
+<a name="1020319"></a>m = pem(z,5,'ss','can')
+</pre></li></ul>
+<p><a name="1337471"></a>Building an ARMAX model for the response to output 2.</p>
+<ul class=continued><li class=continued><pre><a name="1337476"></a>ma = pem(z(:,2,:),'na',2,'nb',[2 3 1],'nc',2,'nk',[1 2 0])
+</pre></li></ul>
+<p><a name="1337481"></a>Comparing the models (<code>compare</code> automatically matches the channels using the channel names).</p>
+<ul class=continued><li class=continued><pre><a name="1337485"></a>compare(z,m,ma)
+</pre></li></ul>
+<a name="algorithm"></a><!-- H2 --><a name="979149"></a><p><font size=+1 color="#990000"><b>Algorithm</b></font><br>
+<p><a name="979150"></a><code>pem</code> uses essentially the same algorithm as  <code>armax</code> with modifications to the computation of prediction errors and gradients.  </p>
+<a name="see_also"></a><a name="seeal_sec"></a><!-- H2 --><a name="979151"></a><p><font size=+1 color="#990000"><b>See Also</b></font><br>
+<p><a name="979152"></a><a href="armax.html#978271"><code>armax</code></a>, <a href="bj.html#1312486"><code>bj</code></a>, <a href="oe.html#979084"><code>oe</code></a>, <a href="idss.html#1332099"><code>idss</code></a>, <a href="idpoly.html#1328111"><code>idpoly</code></a>, <a href="idgrey.html#1588619"><code>idgrey</code></a>, <a href="idmodel.html#1202006"><code>idmodel</code></a>, <a href="algorithmproperties.html#1434097"><code>Algorithm Properties</code></a>, <a href="estimationinfo.html#978635"><code>EstimationInfo</code></a></p>
+
+<br>
+
+
+<p><table bgcolor="#ffe4b0" border=0 width="100%" cellpadding=0 cellspacing=0><tr valign=top><td align=left width=20><a href="pe.html"><img src="b_prev.gif" border=0 align=bottom></a>&nbsp;</td><td align=left>&nbsp;pe</td><td>&nbsp;</td><td align=right>plot (iddata)&nbsp;</td><td align=right width=20><a href="plotiddata.html"><img src="b_next.gif" border=0 align=bottom></a></td></tr></table>
+
+<br>
+<!-- Copyright (c) 2002 by The MathWorks, Inc. -->
+<!-- Last updated: Thu Jun 20 21:09:45 2002 -->
+</body>
+</html>
+
+

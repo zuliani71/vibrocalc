@@ -1,0 +1,89 @@
+<html><head><title>n4sid (System Identification Toolbox)</title>
+<!-- $Revision: 1.10 $  $Date: 2002/06/22 04:12:48 $ -->
+
+<!-- DOCNAME: System Identification Toolbox -->
+<!-- CHUNKNAME: n4sid -->
+<!-- CHAPNAME: n4sid -->
+<!-- HEADSTUFF -->
+<link rel=stylesheet href="docstyle1.css" type="text/css">
+</head>
+<body bgcolor=#ffffff>
+<a name="987586">
+<!-- NAVBARTOP -->
+<table border=0 width="100%" cellpadding=0 cellspacing=0><tr>
+<td valign=baseline bgcolor="#ffe4b0"><b>System Identification Toolbox</b></td>
+<td valign=baseline bgcolor="#ffe4b0" align=right><a href="nyquist.html"><img src="b_prev.gif" border=0></a>&nbsp;&nbsp;&nbsp;<a href="oe.html"><img src="b_next.gif" border=0></a></td>
+</tr>
+</table><font size=+3 color="#990000">n4sid</font>
+
+
+<!-- FNAME:n4sid --><a name="987586"></a>
+
+<!-- SYNCHTO: ch4ref1.html -->
+
+
+<a name=""></a><!-- H2 --><a name="987587"></a><br>
+<p><a name="987589"></a>Estimate state-space models using a subspace method.</p>
+<a name="syntax"></a><!-- H2 --><a name="987590"></a><p><font size=+1 color="#990000"><b>Syntax</b></font><br>
+<ul class=continued><li class=continued><pre><a name="1229535"></a>m = n4sid(data)
+<a name="1020315"></a>m = n4sid(data,order,'Property1',Value1,...,'PropertyN',ValueN) 
+</pre></li></ul>
+<a name="description"></a><!-- H2 --><a name="1229577"></a><p><font size=+1 color="#990000"><b>Description</b></font><br>
+<p><a name="987593"></a>The function <code>n4sid</code> estimates models in state-space form, and returns them as an <code>idss</code> object <code>m</code>. It handles an arbitrary number of input and outputs, including the time-series case (no input). The state-space model is in the innovations form</p>
+<ul class=continued><a name="1419043"></a><li class=continued><img src="ch4re157.gif" align=bottom>
+</ul>
+<p><a name="996024"></a><code>m</code>: The resulting model as an <code>idss</code> object. </p>
+<p><a name="995839"></a><code>data</code>: An <code>iddata</code> object containing the output-input data.</p>
+<p><a name="995900"></a><code>order</code>: The desired order of the state-space model. If <code>order</code> is entered as a row vector (like <code>order = [1:10]</code>), preliminary calculations for all the indicated orders are carried out. A plot will then be given that shows the relative importance of the dimension of the state vector. More precisely, the singular values of the Hankel matrices of the impulse response for different orders are graphed. You will be prompted to select the order, based on this plot. The idea is to choose an order such that the singular values for higher orders are comparatively small. If <code>order = 'best'</code>, a model of "best" (default choice) order is computed, among the orders 1:10. This is the default choice of <code>order</code>.</p>
+<p><a name="996166"></a>The list of property name/property value pairs may contain any <code>idss</code> and algorithm properties. See <code><a href="idss.html">idss</a></code><font face=sansserif> and <a href="algorithmproperties.html#1434097"></font><code>Algorithm Properties</code><font face=sansserif></a>.</font></p>
+<p><a name="1229638"></a><code>idss</code> properties that are of particular interest for <code>n4sid</code> are:</p>
+<p><a name="1393786"></a><code><b>nk</b></code><font face=sansserif>:</font> The delays from the inputs to the outputs, a row vector with the same number of entries as the number of input channels. Default is <code>nk = [1 1 ... 1]</code>. Note that delays being 0 or 1 show up as zeros or estimated parameters in the D matrix. Delays larger than 1 means that a special structure of the A, B and C matrices are used to accommodate the delays. This also means that the actual order of the state-space model will be larger than <code>order</code>.</p>
+<ul><li><a name="1393787"></a><code><b>CovarianceMatrix</b></code> (can be abbreviated to <code>'co</code>'): Setting <code>CovarianceMatrix</code> to<code> 'None</code>' will block all calculations of uncertainty measures. These may take the major part of the computation time. Note that, for a <code>'Free</code>' parameterization, the individual matrix elements cannot be associated with any variance (these parameters are not identifiable). Instead, the resulting model <code>m</code> stores a hidden state-space model in canonical form, that contains covariance information. This is used when the uncertainty of various input-output properties are calculated. It can also be retrieved by <code>m.ss = 'can</code>'<code>.</code> The actual covariance properties of <code>n4sid</code> estimates are not known today. Instead the Cramer-Rao bound is computed and stored as an indication of the uncertainty.
+<p><a name="1519271"></a>
+<code><b>DisturbanceModel</b></code><font face=sansserif>:</font><code><b> </b></code><font face=sansserif>Setting </font><code>DisturbanceModel</code><font face=sansserif> to `</font><code>None</code><font face=sansserif>' will deliver a model with K = 0. This will have no direct effect on the dynamics model, other that that the default choice of </font><code>N4Horizon</code><font face=sansserif> will not involve past outputs</font><code><b>.</b></code></p>
+</li>
+<li><a name="1519272"></a><code><b>InitialState</b></code><font face=sansserif>:</font> <font face=sansserif>The initial state is always estimated for better accuracy. However. it is returned with </font><code>m</code><font face=sansserif> only if </font><code>InitialState = `Estimate'</code>.
+</li>
+</ul>
+<p><a name="1229713"></a>Algorithm properties that are special interest are:</p>
+<ul><li><a name="1229719"></a><code><b>Focus</b></code><font face=sansserif>:</font><code><b> </b></code>Assumes the values <code>'Prediction</code>' (default), <code>'Simulation</code>', <code>` Stability', </code>or any SISO linear filter (given as an LTI or <code>idmodel</code> object, or as filter coefficients. See <a href="algorithmproperties.html#1434097"><code>Algorithm Properties</code></a>.) Setting '<code>Focus</code>' to '<code>Simulation</code>' chooses weights that should give a better simulation performance for the model. In particular, a stable model is guaranteed. Selecting a linear filter will focus the fit to the frequency ranges that are emphasized by this filter.
+</li>
+<li><a name="1229747"></a><code><b>N4Weight</b></code><font face=sansserif>:</font> This property determines some weighting matrices used in the singular-value decomposition that is a central step in the algorithm. Two choices are offered: <code>'MOESP</code>' that corresponds to the <font face=sansserif>MOESP</font> algorithm by Verhaegen, and <code>'CVA</code>' which is the canonical variable algorithm by Larimore. The default value is <code>'N4Weight</code>'<code> = </code>'<code>Auto</code>', which gives an automatic choice between the two options. <code>m.EstimationInfo.N4Weight</code> tells you what the actual choice turned out to be.
+</li>
+<li><a name="1229748"></a><code><b>N4Horizon</b></code><font face=sansserif>:</font><code><b> </b></code>Determines the prediction horizons forward and backward, used by the algorithm. This is a row vector with three elements: <code>N4Horizon =[r sy su]</code>, where <code>r</code> is the maximum forward prediction horizon, i.e., the algorithms uses up to r-step ahead predictors. sy is the number of past outputs, and <code>su</code> is the number of past inputs that are used for the predictions. See pages 209-210 in Ljung(1999) for the exact meaning of this. These numbers may have a substantial influence of the quality of the resulting model, and there are no simple rules for choosing them. Making <code>'N4Horizon</code>' a <code>k</code>-by-3 matrix, means that each row of <code>'N4Horizon</code>'<code> </code>will be tried out, and the value that gives the best (prediction) fit to data will be selected. (This option cannot be combined with selection of model order.) If the property <code>'Trace'</code><font face=sansserif> </font>is <code>'On'</code>, information about the results will be given in the MATLAB command window.
+</li>
+</ul>
+<ul class=continued><li class=continued><a name="1462185"></a>If you specify only one column in <code>'N4Horizon</code>', the interpretation is <code>r=sy=su</code>. The default choice is <code>'N4Horizon</code>'<code> = </code>'<code>Auto</code>', which uses an Akaike Information Criterion (AIC) for the selection of <code>sy</code> and <code>su</code>. If '<code>DisturbanceModel' = 'None',</code> <code>sy</code> is set to 0. Typing <code>m.EstimationInfor.N4Horizon</code> will tell you what the final choice of horizons were.</p>
+</li>
+</ul>
+<a name="algorithm"></a><!-- H2 --><a name="1096432"></a><p><font size=+1 color="#990000"><b>Algorithm</b></font><br>
+<p><a name="997048"></a>The variants of the implemented algorithm are described in Section 10.6 in Ljung (1999).</p>
+<a name="examples"></a><a name="exmpl_sec"></a><!-- H2 --><a name="991253"></a><p><font size=+1 color="#990000"><b>Examples</b></font><br>
+<p><a name="987605"></a>Build a fifth order model from data with three inputs and two outputs. Try several choices of auxiliary orders. Look at the frequency response of the model. </p>
+<ul class=continued><li class=continued><pre><a name="997126"></a>z = iddata([y1 y2],[ u1 u2 u3]);
+<a name="997151"></a>m = n4sid(z,5,'n4h',[7:15]','trace','on');
+<a name="997188"></a>bode(m,'sd',3)
+</pre></li></ul>
+<p><a name="997213"></a>Estimate a continuous-time model, in a canonical form parameterization, focusing on the simulation behavior. Determine the order yourself after seeing the plot of singular values.</p>
+<ul class=continued><li class=continued><pre><a name="997238"></a>m = n4sid(m,[1:10],'foc','sim','ssp','can','ts',0)
+<a name="1233130"></a>bode(m)
+</pre></li></ul>
+<a name="see_also"></a><a name="seeal_sec"></a><!-- H2 --><a name="997300"></a><p><font size=+1 color="#990000"><b>See Also</b></font><br>
+<p><a name="987607"></a><a href="idss.html#1332099"><code>idss</code></a>, <a href="pem.html#979122"><code>pem</code></a>, <a href="algorithmproperties.html#1434097"><code>Algorithm Properties</code></a></p>
+<a name="references"></a><!-- H2 --><a name="1419078"></a><p><font size=+1 color="#990000"><b>References</b></font><br>
+<p><a name="1420017"></a>P. vanOverschee and B. DeMoor: <em>Subspace Identification of Linear Systems: Theory, Implementation, Applications</em>. Kluwer Academic Publishers, 1996.</p>
+<p><a name="1420174"></a>M. Verhaegen: Identification of the deterministic part of MIMO state space models. <em>Automatica,</em> Vol 30, pp 61-74, 1994.</p>
+<p><a name="1420175"></a>W.E. Larimore: Canonical variate analysis in identification, filtering and adaptive control. In <em>Proc. 29th IEEE Conference on Decision and Control</em>, pp 596-604, Honolulu, 1990.</p>
+
+<br>
+
+
+<p><table bgcolor="#ffe4b0" border=0 width="100%" cellpadding=0 cellspacing=0><tr valign=top><td align=left width=20><a href="nyquist.html"><img src="b_prev.gif" border=0 align=bottom></a>&nbsp;</td><td align=left>&nbsp;nyquist</td><td>&nbsp;</td><td align=right>oe&nbsp;</td><td align=right width=20><a href="oe.html"><img src="b_next.gif" border=0 align=bottom></a></td></tr></table>
+
+<br>
+<!-- Copyright (c) 2002 by The MathWorks, Inc. -->
+<!-- Last updated: Thu Jun 20 21:09:45 2002 -->
+</body>
+</html>
+
+

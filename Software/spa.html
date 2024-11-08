@@ -1,0 +1,91 @@
+<html><head><title>spa (System Identification Toolbox)</title>
+<!-- $Revision: 1.10 $  $Date: 2002/06/22 04:13:04 $ -->
+
+<!-- DOCNAME: System Identification Toolbox -->
+<!-- CHUNKNAME: spa -->
+<!-- CHAPNAME: spa -->
+<!-- HEADSTUFF -->
+<link rel=stylesheet href="docstyle1.css" type="text/css">
+</head>
+<body bgcolor=#ffffff>
+<a name="1248428">
+<!-- NAVBARTOP -->
+<table border=0 width="100%" cellpadding=0 cellspacing=0><tr>
+<td valign=baseline bgcolor="#ffe4b0"><b>System Identification Toolbox</b></td>
+<td valign=baseline bgcolor="#ffe4b0" align=right><a href="size.html"><img src="b_prev.gif" border=0></a>&nbsp;&nbsp;&nbsp;<a href="ss.html"><img src="b_next.gif" border=0></a></td>
+</tr>
+</table><font size=+3 color="#990000">spa</font>
+
+
+<!-- FNAME:spa --><a name="1248428"></a>
+
+<!-- SYNCHTO: ch4ref1.html -->
+
+
+<a name=""></a><!-- H2 --><a name="979630"></a><br>
+<p><a name="979634"></a>Estimate frequency response and spectrum by spectral analysis.</p>
+<a name="syntax"></a><!-- H2 --><a name="979635"></a><p><font size=+1 color="#990000"><b>Syntax</b></font><br>
+<ul class=continued><li class=continued><pre><a name="979636"></a>g = spa(data)
+<a name="1020384"></a>g = spa(data,M,w,maxsize)
+<a name="1337188"></a>[g,phi,spe] = spa(data)
+</pre></li></ul>
+<a name="description"></a><!-- H2 --><a name="979637"></a><p><font size=+1 color="#990000"><b>Description</b></font><br>
+<p><a name="979638"></a><code>spa</code> estimates the transfer function <code>g</code> and the noise spectrum <code><img src="ch4ref7a.gif" align=bottom></code> of the general linear model</p>
+<ul class=continued><a name="1383241"></a><li class=continued><img src="ch4re10a.gif" align=bottom>
+</ul>
+<p><a name="979648"></a>where <img src="ch4re13a.gif" align=bottom> is the spectrum of <img src="ch4re34a.gif" align=bottom>.</p>
+<p><a name="1240198"></a><code>data</code> contains the output-input data as an <code>iddata</code> object. The data may be complex-valued.</p>
+<p><a name="979653"></a><code>g</code> is returned as an <code>idfrd</code> object (see <code>idfrd</code>) with the estimate of <img src="ch4re16a.gif" align=bottom>at the frequencies <img src="ch4re19a.gif" align=bottom> specified by row vector <code>w</code><font face=sansserif>. </font>The default value of <code>w</code> is</p>
+<ul class=continued><li class=continued><pre><a name="979657"></a>w = [1:128]/128*pi/Ts
+</pre></li></ul>
+<p><a name="979661"></a><font face=sansserif>Here </font><code>Ts </code><font face=sansserif>is the sampling interval of </font><code>data.</code></p>
+<p><a name="1421148"></a><code>g </code>also includes information about the spectrum estimate of <img src="ch4re22b.gif" align=bottom>at the same frequencies. Both outputs are returned with estimated covariances, included in <code>g</code>. See <code><a href="idfrd.html">idfrd</a></code><font face=sansserif>.</font></p>
+<p><a name="979663"></a><code>M</code> is the length of the lag window used in the calculations.  The default value is</p>
+<ul class=continued><li class=continued><pre><a name="979664"></a>M = min(30,length(data)/10)
+</pre></li></ul>
+<p><a name="979665"></a>Changing the value of <code>M</code> exchanges bias for variance in the spectral estimate. As <code>M</code> is increased, the estimated functions show more detail, but are more corrupted by noise. The sharper peaks a true frequency function has, the higher <code>M</code> it needs. See <code><a href="etfe.html">etfe</a></code> as an alternative for narrowband signals and systems. See also <a href="ch3tut9.html#978308">Estimating Spectra and Frequency Functions</a> in the "Tutorial"<em>.</em></p>
+<p><a name="979666"></a><code>maxsize</code> controls the memory-speed trade-off (see <a href="algorithmproperties.html#1434097"><code>Algorithm Properties</code></a>).</p>
+<p><a name="979668"></a>For time series, where data contains no input channels,  <code>g</code> is returned with the estimated output spectrum and its estimated standard deviation.</p>
+<p><a name="1105745"></a>When <code>spa</code> is called with two or three output arguments:</p>
+<ul><li><a name="1337277"></a>g is returned as an <code>idfrd</code> model with just the estimated frequency response from input to output and its uncertainty.
+</li>
+<li><a name="1337286"></a><code>phi</code> is returned as an <code>idfrd</code> model, containing just the spectrum data for the output spectrum<code> <img src="ch4re169.gif" align=bottom></code> and its uncertainty.
+</li>
+<li><a name="1337290"></a><code>spe</code> is returned as an <code>idfrd</code> model containing spectrum data for all output-input channels in data. That is if <code>z = [data.OutputData</code>, <code>data.InputData]</code>, <code>spe</code> contains as spectrum data the matrix-valued power spectrum of <code>z</code>.
+</li>
+</ul>
+<ul><a name="1383247"></a> <br>
+<br><img src="ch4re73a.gif" align=bottom>
+</ul>
+<p><a name="1106333"></a>Here <em>win(m)</em> is weight at lag <code>m</code> of an M-size Hamming window and <em>W </em>is the frequency value i rad/s. Note that ' denotes complex-conjugate transpose.</p>
+<p><a name="1106888"></a>The normalization of the spectrum differs from the one used<font face=sansserif> by </font><code>spectrum</code> in the Signal Processing Toolbox. See <a href="ch3tut67.html#979809">Spectrum Normalization and the Sampling Interval</a> in the "Tutorial" for a more precise definition.</p>
+<a name="examples"></a><a name="exmpl_sec"></a><!-- H2 --><a name="979670"></a><p><font size=+1 color="#990000"><b>Examples</b></font><br>
+<p><a name="979671"></a>With default frequencies</p>
+<ul class=continued><li class=continued><pre><a name="979672"></a>g = spa(z);
+<a name="1020387"></a>bode(g)
+</pre></li></ul>
+<p><a name="979673"></a>With logarithmically spaced frequencies</p>
+<ul class=continued><li class=continued><pre><a name="979674"></a>w = logspace(-2,pi,128);
+<a name="1020388"></a>g= spa(z,[],w); % (empty matrix gives default)
+<a name="1020390"></a>bode(g,3)
+<a name="1240219"></a>bode(g(<code>'</code>noise'),3) % The noise spectrum with confidence interval 
+of 3 standard deviations.
+</pre></li></ul>
+<a name="algorithm"></a><!-- H2 --><a name="1240887"></a><p><font size=+1 color="#990000"><b>Algorithm</b></font><br>
+<p><a name="979677"></a>The covariance function estimates are computed using <code>covf</code>.  These are multiplied by a Hamming window of lag size <code>M</code> and then Fourier transformed.  The relevant ratios and differences are then formed.  For the default frequencies, this is done using FFT, which is more efficient than for user-defined frequencies.  For multi-variable systems, a straightforward <code>for</code><font face=sansserif>-loop</font> is used.</p>
+<p><a name="979682"></a>Note that <code>M =</code> <img src="ch4re25b.gif" align=bottom> is in Table 6.1 of Ljung (1999).  The standard deviations are computed as on pages 184 and 188 in Ljung (1999).</p>
+<a name="see_also"></a><a name="seeal_sec"></a><!-- H2 --><a name="979683"></a><p><font size=+1 color="#990000"><b>See Also</b></font><br>
+<p><a name="979684"></a><a href="bode.html#978467"><code>bode</code></a>, <a href="etfe.html#1245881"><code>etfe</code></a>, <a href="ffplot.html#1387115"><code>ffplot</code></a>, <a href="idfrd.html#1335581"><code>idfrd</code></a>, <a href="nyquist.html#987233"><code>nyquist</code></a></p>
+
+<br>
+
+
+<p><table bgcolor="#ffe4b0" border=0 width="100%" cellpadding=0 cellspacing=0><tr valign=top><td align=left width=20><a href="size.html"><img src="b_prev.gif" border=0 align=bottom></a>&nbsp;</td><td align=left>&nbsp;size</td><td>&nbsp;</td><td align=right>ss, tf, zpk, frd&nbsp;</td><td align=right width=20><a href="ss.html"><img src="b_next.gif" border=0 align=bottom></a></td></tr></table>
+
+<br>
+<!-- Copyright (c) 2002 by The MathWorks, Inc. -->
+<!-- Last updated: Thu Jun 20 21:09:45 2002 -->
+</body>
+</html>
+
+

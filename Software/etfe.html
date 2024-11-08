@@ -1,0 +1,75 @@
+<html><head><title>etfe (System Identification Toolbox)</title>
+<!-- $Revision: 1.10 $  $Date: 2002/06/22 04:12:30 $ -->
+
+<!-- DOCNAME: System Identification Toolbox -->
+<!-- CHUNKNAME: etfe -->
+<!-- CHAPNAME: etfe -->
+<!-- HEADSTUFF -->
+<link rel=stylesheet href="docstyle1.css" type="text/css">
+</head>
+<body bgcolor=#ffffff>
+<a name="1245881">
+<!-- NAVBARTOP -->
+<table border=0 width="100%" cellpadding=0 cellspacing=0><tr>
+<td valign=baseline bgcolor="#ffe4b0"><b>System Identification Toolbox</b></td>
+<td valign=baseline bgcolor="#ffe4b0" align=right><a href="estimationinfo.html"><img src="b_prev.gif" border=0></a>&nbsp;&nbsp;&nbsp;<a href="ffplot.html"><img src="b_next.gif" border=0></a></td>
+</tr>
+</table><font size=+3 color="#990000">etfe</font>
+
+
+<!-- FNAME:etfe --><a name="1245881"></a>
+
+<!-- SYNCHTO: ch4ref1.html -->
+
+
+<a name=""></a><!-- H2 --><a name="978636"></a><br>
+<p><a name="978639"></a>Estimate empirical transfer functions and periodograms.</p>
+<a name="syntax"></a><!-- H2 --><a name="978640"></a><p><font size=+1 color="#990000"><b>Syntax</b></font><br>
+<ul class=continued><li class=continued><pre><a name="978641"></a>g = etfe(data)
+<a name="1020244"></a>g = etfe(data,M,N)
+</pre></li></ul>
+<a name="description"></a><!-- H2 --><a name="978642"></a><p><font size=+1 color="#990000"><b>Description</b></font><br>
+<p><a name="978646"></a><code>etfe</code> estimates the transfer function <code>g</code> of the general linear model</p>
+<ul class=continued><a name="1380121"></a><li class=continued><img src="ch4re60a.gif" align=bottom>
+</ul>
+<p><a name="978647"></a><code>data</code> contains the output-input data and is an <code>iddata</code> object.</p>
+<p><a name="978652"></a><code>g</code> is given as an <code>idfrd</code> object with the estimate of <img src="ch4re63a.gif" align=bottom> at the frequencies</p>
+<ul class=continued><li class=continued><pre><a name="978653"></a>w = [1:N]/N*pi/T
+</pre></li></ul>
+<p><a name="978654"></a>The default value of <code>N</code> is 128. </p>
+<p><a name="1303157"></a>In case <code>data</code> contains a time series (no input channels), <code>g</code> is returned as the periodogram of <code>y</code>.</p>
+<p><a name="978656"></a>When <code>M</code> is specified other than the default value <code>M = []</code>, a smoothing operation is performed on the raw spectral estimates. The effect of <code>M</code> is then similar to the effect of <code>M</code> in <code>spa</code>. This can be a useful alternative to <code>spa</code> for narrowband spectra and systems, which require large values of <code>M</code>. </p>
+<p><a name="978658"></a>When <code>etfe</code> is applied to time series, the corresponding spectral estimate is normalized in the way that is defined in the section <a href="ch3tut67.html#979809">Spectrum Normalization and the Sampling Interval</a> in the <em>Tutorial</em>. Note that this normalization may differ from the one used by <code>spectrum</code> in the Signal Processing Toolbox.</p>
+<p><a name="1198677"></a>If the (input) data is marked as periodic (<code>data.Period = integer</code>) and contains an even number of periods, the response is computed at the frequencies <code>k*2*pi/period</code> for<code> k=0</code> up to the Nyquist frequency.</p>
+<a name="examples"></a><a name="exmpl_sec"></a><!-- H2 --><a name="978659"></a><p><font size=+1 color="#990000"><b>Examples</b></font><br>
+<p><a name="978660"></a>Compare an empirical transfer function estimate to a smoothed spectral estimate.</p>
+<ul class=continued><li class=continued><pre><a name="978661"></a>ge = etfe(z);
+<a name="1020246"></a>gs = spa(z);
+<a name="1020247"></a>bode(ge,gs)
+</pre></li></ul>
+<p><a name="1338773"></a>Generate a periodic input, simulate a system with it, and compare the frequency response of the estimated model with the true system at the excited frequency points.</p>
+<ul class=continued><li class=continued><pre><a name="1338784"></a>m = idpoly([1 -1.5 0.7],[0 1 0.5]);
+<a name="1338782"></a>u = iddata([],idinput([50,1,10],'sine'));
+<a name="1338783"></a>u.Period = 50;
+<a name="1503860"></a>y = sim(m,u);
+<a name="1338785"></a>me = etfe([y u])
+<a name="1338786"></a>bode(me,'b*',m)
+</pre></li></ul>
+<a name="algorithm"></a><!-- H2 --><a name="978662"></a><p><font size=+1 color="#990000"><b>Algorithm</b></font><br>
+<p><a name="978663"></a>The empirical transfer function estimate is computed as the ratio of the output Fourier transform to the input Fourier transform, using <code>fft</code>.  The periodogram is computed as the normalized absolute square of the Fourier transform of the time series.</p>
+<p><a name="1387111"></a>The smoothed versions (<code>M</code> less than the length of <code>z</code>) are obtained by applying a Hamming window to the output fast Fourier transform (FFT) times the conjugate of the input FFT, and to the absolute square of the input FFT, respectively, and subsequently forming the ratio of the results.  The length of this Hamming window is equal to the number of data points in <code>z</code> divided by <code>M</code>, plus one.</p>
+<a name="see_also"></a><a name="seeal_sec"></a><!-- H2 --><a name="1387113"></a><p><font size=+1 color="#990000"><b>See Also</b></font><br>
+<p><a name="1387114"></a><a href="spa.html#1248428"><code>spa</code></a> </p>
+
+<br>
+
+
+<p><table bgcolor="#ffe4b0" border=0 width="100%" cellpadding=0 cellspacing=0><tr valign=top><td align=left width=20><a href="estimationinfo.html"><img src="b_prev.gif" border=0 align=bottom></a>&nbsp;</td><td align=left>&nbsp;EstimationInfo</td><td>&nbsp;</td><td align=right>ffplot&nbsp;</td><td align=right width=20><a href="ffplot.html"><img src="b_next.gif" border=0 align=bottom></a></td></tr></table>
+
+<br>
+<!-- Copyright (c) 2002 by The MathWorks, Inc. -->
+<!-- Last updated: Thu Jun 20 21:09:45 2002 -->
+</body>
+</html>
+
+

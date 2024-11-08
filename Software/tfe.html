@@ -1,0 +1,125 @@
+<html><head><title>tfe (Signal Processing Toolbox)</title>
+<!-- $Revision: 1.18 $  $Date: 2002/06/07 21:22:25 $ -->
+
+<!-- DOCNAME: Signal Processing Toolbox -->
+<!-- CHUNKNAME: tfe -->
+<!-- CHAPNAME: tfe -->
+<!-- HEADSTUFF -->
+<link rel=stylesheet href="docstyle1.css" type="text/css">
+</head>
+<body bgcolor=#ffffff>
+<a name="757">
+<!-- NAVBARTOP -->
+<table border=0 width="100%" cellpadding=0 cellspacing=0><tr>
+<td valign=baseline bgcolor="#ffe4b0"><b>Signal Processing Toolbox</b></td>
+<td valign=baseline bgcolor="#ffe4b0" align=right><a href="tf2zpk.html"><img src="b_prev.gif" border=0></a>&nbsp;&nbsp;&nbsp;<a href="triang.html"><img src="b_next.gif" border=0></a></td>
+</tr>
+</table><font size=+3 color="#990000">tfe</font>
+
+
+<!-- FNAME:tfe --><a name="757"></a>
+
+<!-- SYNCHTO: reftable.html -->
+
+
+<a name=""></a><!-- H2 --><a name="162232"></a><br>
+<p><a name="162234"></a>
+Estimate the transfer function from input and output</p>
+<a name="syntax"></a><!-- H2 --><a name="162235"></a><p><font size=+1 color="#990000"><b>Syntax</b></font><br>
+<ul class=continued><li class=continued><pre><a name="1151"></a>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y)
+<a name="5798"></a>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,nfft)
+<a name="5799"></a>[Txy,f]<code>&nbsp;=&nbsp;</code>tfe(x,y,nfft,fs)
+<a name="879"></a>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,nfft,fs,window)
+<a name="5800"></a>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,nfft,fs,window,numoverlap)
+<a name="5801"></a>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,...,'<code><em>dflag</em></code>')
+<a name="846"></a>tfe(x,y)
+</pre></li></ul>
+<a name="description"></a><!-- H2 --><a name="1152"></a><p><font size=+1 color="#990000"><b>Description</b></font><br>
+<p><a name="1153"></a><code><code>Txy&nbsp;=&nbsp;tfe(x,y)
+</code></code> <a name="96650"></a>finds a transfer function estimate <code>Txy</code> given input signal vector <code>x</code> and output signal vector <code>y</code>. The <em>transfer function</em> is the quotient of the cross spectrum of <code>x</code> and <code>y</code> and the power spectrum of <code>x</code>.</p>
+<ul class=continued><a name="289687"></a><li class=continued><img src="refr220a.gif" align=bottom>
+</ul>
+<p><a name="1154"></a>The relationship between the input <code>x</code> and output <code>y</code> is modeled by the linear, time-invariant transfer function <code>Txy</code>.</p>
+<p><a name="847"></a>Vectors <code>x</code> and <code>y</code> must be the same length. <code>Txy&nbsp;=&nbsp;tfe(x,y)</code> uses the following default values:</p>
+<ul><li><a name="576"></a><code>nfft&nbsp;=&nbsp;min(256,(length(x)) </code>
+</li>
+<li><a name="579"></a><code>fs&nbsp;=&nbsp;2 </code>
+</li>
+<li><a name="578"></a><code>window&nbsp;</code><font face=sansserif>is a periodic Hann (Hanning) window of length </font><code>nfft</code>
+</li>
+<li><a name="577"></a><code>numoverlap&nbsp;=&nbsp;0 </code>
+</li>
+</ul>
+<p><a name="162915"></a><code>nfft</code> specifies the FFT length that <code>tfe</code> uses. This value determines the frequencies at which the power spectrum is estimated. <code>fs</code> is a scalar that specifies the sampling frequency. <code>window</code> specifies a windowing function and the number of samples <code>tfe</code> uses in its sectioning of the <code>x</code> and <code>y</code> vectors. <code>numoverlap</code> is the number of samples by which the sections overlap. Any arguments that are omitted from the end of the parameter list use the default values shown above.</p>
+<p><a name="864"></a>If <code>x</code> is real, <code>tfe</code> estimates the transfer function at positive frequencies only; in this case, the output <code>Txy</code> is a column vector of length <code>nfft/2+1</code> for <code>nfft</code> even and <code>(nfft+1)/2</code> for <code>nfft</code> odd. If <code>x</code> or <code>y</code> is complex, <code>tfe</code> estimates the transfer function for both positive and negative frequencies and <code>Txy</code> has length <code>nfft</code>.</p>
+<p><a name="580"></a><code>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,nfft)
+</code> <a name="96682"></a>uses the specified FFT length <code>nfft</code> in estimating the transfer function. </p>
+<p><a name="881"></a><code><code>[Txy,f]&nbsp;=&nbsp;tfe(x,y,nfft,fs)
+</code></code> <a name="96700"></a>returns a vector <code>f</code> of frequencies at which <code>tfe</code> estimates the transfer function. <code>fs</code> is the sampling frequency. <code>f</code> is the same size as <code>Txy</code>, so <code>plot(f,Txy</code>) plots the transfer function estimate versus properly scaled frequency. <code>fs</code> has no effect on the output <code>Txy</code>; it is a frequency scaling multiplier.</p>
+<p><a name="860"></a><code>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,nfft,fs,window)
+</code> <a name="96718"></a>specifies a windowing function and the number of samples per section of the <code>x</code> vector. If you supply a scalar for <code>window</code>, <code>Txy</code> uses a Hann window of that length. The length of the window must be less than or equal to <code>nfft</code>; <code>tfe</code> zero pads the sections if the length of the window exceeds <code>nfft</code>.</p>
+<p><a name="861"></a><code>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,nfft,fs,window,numoverlap)
+</code> <a name="96736"></a>overlaps the sections of <code>x</code> by <code>numoverlap</code> samples.</p>
+<p><a name="862"></a>You can use the empty matrix <code>[]</code> to specify the default value for any input argument except <code>x</code> or <code>y</code>. For example,</p>
+<ul class=continued><li class=continued><pre><a name="589"></a>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,[],[],kaiser(128,5))
+</pre></li></ul>
+<p><a name="863"></a>uses 256 as the value for <code>nfft</code> and 2 as the value for <code>fs</code>.</p>
+<p><a name="457602"></a><code>Txy<code>&nbsp;=&nbsp;</code>tfe(x,y,...,'<code><em>dflag</em></code>')
+</code> <a name="457603"></a>specifies a detrend option, where <code>'</code><code><em>dflag</em></code><code>'</code> is</p>
+<ul><li><a name="457604"></a><code>'linear'</code>, to remove the best straight-line fit from the prewindowed sections of <code>x</code> and <code>y</code>
+</li>
+<li><a name="843"></a><code>'mean'</code>, to remove the mean from the prewindowed sections of<code> x</code> and <code>y</code>
+</li>
+<li><a name="222628"></a><code>'none'</code>, for no detrending (default)
+</li>
+</ul>
+<p><a name="222629"></a>The <code>'</code><code><em>dflag</em></code><code>'</code> parameter must appear last in the list of input arguments. <code>tfe</code> recognizes a <code>'</code><code><em>dflag</em></code><code>'</code> string no matter how many intermediate arguments are omitted.</p>
+<p><a name="845"></a><code>tfe(...)
+</code> <a name="109972"></a>with no output arguments plots the magnitude of the transfer function estimate as decibels versus frequency in the current figure window. </p>
+<a name="examples"></a><a name="exmpl_sec"></a><!-- H2 --><a name="928"></a><p><font size=+1 color="#990000"><b>Examples</b></font><br>
+<p><a name="929"></a>Compute and plot the transfer function estimate between two colored noise sequences <code>x</code> and&nbsp;<code>y</code>:</p>
+<ul class=continued><li class=continued><pre><a name="930"></a>h<code>&nbsp;=&nbsp;</code>fir1(30,0.2,rectwin(31));
+<a name="5802"></a>x<code>&nbsp;=&nbsp;</code>randn(16384,1);
+<a name="5803"></a>y<code>&nbsp;=&nbsp;</code>filter(h,1,x);
+<a name="5804"></a>tfe(x,y,1024,[],[],512)
+<a name="341934"></a>title('Transfer Function Estimate')
+<p><a name="434155"></a>
+<img src="tfe_exam.gif" align=bottom></p>
+</pre></li></ul>
+<a name="algorithm"></a><!-- H2 --><a name="1156"></a><p><font size=+1 color="#990000"><b>Algorithm</b></font><br>
+<p><a name="568"></a><code>tfe</code> uses a four-step algorithm:</p>
+<ol start="1">
+<li><a name="646"></a>It multiplies the detrended sections by <code>window</code>.
+</li>
+<li><a name="570"></a>It takes the length <code>nfft</code> FFT of each section. 
+</li>
+<li><a name="575"></a>It averages the squares of the spectra of the <code>x</code> sections to form <code>Pxx</code> and averages the products of the spectra of the <code>x</code> and <code>y</code> sections to form <code>Pxy</code>. 
+</li>
+<li><a name="653"></a>It calculates <code>Txy</code>:
+</li>
+<ul class=continued><li class=continued><pre><a name="654"></a>Txy<code>&nbsp;=&nbsp;</code>Pxy./Pxx
+</pre></li></ul>
+</ol>
+<a name="diagnostics"></a><!-- H2 --><a name="567"></a><p><font size=+1 color="#990000"><b>Diagnostics</b></font><br>
+<p><a name="1157"></a>An appropriate diagnostic message is displayed when incorrect arguments are used:</p>
+<ul class=continued><li class=continued><pre><a name="921"></a>Requires window's length to be no greater than the FFT length.
+<a name="5805"></a>Requires NOVERLAP to be strictly less than the window length.
+<a name="5806"></a>Requires positive integer values for NFFT and NOVERLAP.
+<a name="5807"></a>Requires vector (either row or column) input.
+<a name="5808"></a>Requires inputs X and Y to have the same length.
+</pre></li></ul>
+<a name="see_also"></a><a name="seeal_sec"></a><!-- H2 --><a name="494794"></a><p><font size=+1 color="#990000"><b>See Also</b></font><br>
+<p><a name="494795"></a>etfe, <code><a href="cohere.html">cohere</a></code>, <code><a href="csd.html">csd</a></code>, <code><a href="pwelch.html">pwelch</a></code>, spa</p>
+
+<br>
+
+
+<p><table bgcolor="#ffe4b0" border=0 width="100%" cellpadding=0 cellspacing=0><tr valign=top><td align=left width=20><a href="tf2zpk.html"><img src="b_prev.gif" border=0 align=bottom></a>&nbsp;</td><td align=left>&nbsp;tf2zpk</td><td>&nbsp;</td><td align=right>triang&nbsp;</td><td align=right width=20><a href="triang.html"><img src="b_next.gif" border=0 align=bottom></a></td></tr></table>
+
+<br>
+<!-- Copyright 2002 The MathWorks, Inc. -->
+<!-- Last updated: Thu Jun 06 20:12:42 2002 -->
+</body>
+</html>
+
+
